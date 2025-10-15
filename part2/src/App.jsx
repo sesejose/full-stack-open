@@ -1,4 +1,5 @@
 import Courses from "./components/Courses";
+import Course from "./components/Course";
 
 const App = () => {
   const courses = [
@@ -46,7 +47,17 @@ const App = () => {
     },
   ];
 
-  return <Courses courses={courses} />;
+  return (
+    // <Courses courses={courses} />;
+    <>
+      <div>
+        <h2>Web development curriculum</h2>
+        {courses.map((course) => (
+          <Course key={course.id} courses={[course]} />
+        ))}
+      </div>
+    </>
+  );
 };
 
 export default App;
