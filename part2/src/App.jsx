@@ -4,6 +4,15 @@ const App = () => {
   const [persons, setPersons] = useState([{ name: "Arto Hellas" }]);
   const [newName, setNewName] = useState("");
 
+  const handleInput = (event) => {
+    const found = persons.find((element) => element.name === event.target.value);
+    if (!persons.includes(found)) {
+      setNewName(event.target.value);
+    } else {
+      alert(`${newName} is already added to phonebook`);
+    }
+  };
+
   const addNewName = (event) => {
     event.preventDefault();
     const nameObject = {
@@ -11,10 +20,7 @@ const App = () => {
     };
     setPersons(persons.concat(nameObject));
     setNewName("");
-  };
-
-  const handleInput = (event) => {
-    setNewName(event.target.value);
+    // to clear the input field after submission!
   };
 
   return (
