@@ -15,5 +15,4 @@ const FindPerson = (props) => {
     </>
   );
 };
-
 export default FindPerson;
