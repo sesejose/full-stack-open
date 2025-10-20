@@ -1,14 +1,15 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import AddPerson from "./components/AddPerson";
 import Persons from "./components/Persons";
 import FindPerson from "./components/FindPerson";
+import axios from "axios";
 
 const App = () => {
   const [persons, setPersons] = useState([
-    { name: "Arto Hellas", number: "040-123456", id: 1 },
-    { name: "Ada Lovelace", number: "39-44-5323523", id: 2 },
-    { name: "Dan Abramov", number: "12-43-234345", id: 3 },
-    { name: "Mary Poppendieck", number: "39-23-6423122", id: 4 },
+    // { name: "Arto Hellas", number: "040-123456", id: 1 },
+    // { name: "Ada Lovelace", number: "39-44-5323523", id: 2 },
+    // { name: "Dan Abramov", number: "12-43-234345", id: 3 },
+    // { name: "Mary Poppendieck", number: "39-23-6423122", id: 4 },
   ]);
   const [newNumber, setNewNumber] = useState([{ number: "040-123456" }]);
   const [newName, setNewName] = useState("");
@@ -61,6 +62,13 @@ const App = () => {
       // alert(`We can not find ${event.target.value} in the phonebook`);
     }
   };
+
+  useEffect(() => {
+    axios.get("http://localhost:3001/persons").then((response) => {
+      // console.log(response.data);
+      setPersons(response.data);
+    });
+  }, []);
 
   console.log(persons);
 
