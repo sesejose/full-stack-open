@@ -3,6 +3,7 @@ import AddPerson from "./components/AddPerson";
 import Persons from "./components/Persons";
 import FindPerson from "./components/FindPerson";
 import axios from "axios";
+import personServices from "./services/persons";
 
 const App = () => {
   const [persons, setPersons] = useState([
@@ -16,14 +17,19 @@ const App = () => {
   const [personFound, setPersonFound] = useState();
 
   // fetching data from server with axios and useEffect
+  // useEffect(() => {
+  //   axios.get("http://localhost:3001/persons").then((response) => {
+  //     // console.log(response.data);
+  //     setPersons(response.data);
+  //   });
+  // }, []);
+
+  // Fetching data from server with axios and useEffect using service persons.js in the MODULE
   useEffect(() => {
-    axios.get("http://localhost:3001/persons").then((response) => {
-      // console.log(response.data);
+    personServices.getAllPersons().then((response) => {
       setPersons(response.data);
     });
   }, []);
-
-  console.log(persons);
 
   const handleInputName = (event) => {
     const found = persons.find((element) => element.name === event.target.value);
@@ -54,8 +60,16 @@ const App = () => {
     setNewName("");
     setNewNumber(""); // to clear the input field after submission!
     // Add new person to server / db.json using
-    axios
-      .post("http://localhost:3001/persons", personObject)
+    // axios
+    //   .post("http://localhost:3001/persons", personObject)
+    //   .then((response) => {
+    //     console.log("Data posted successfully:", response.data);
+    //   })
+    //   .catch((error) => {
+    //     console.error("Error posting data:", error);
+    //   });
+    personServices
+      .addPerson(personObject)
       .then((response) => {
         console.log("Data posted successfully:", response.data);
       })
