@@ -15,6 +15,16 @@ const App = () => {
   const [newName, setNewName] = useState("");
   const [personFound, setPersonFound] = useState();
 
+  // fetching data from server with axios and useEffect
+  useEffect(() => {
+    axios.get("http://localhost:3001/persons").then((response) => {
+      // console.log(response.data);
+      setPersons(response.data);
+    });
+  }, []);
+
+  console.log(persons);
+
   const handleInputName = (event) => {
     const found = persons.find((element) => element.name === event.target.value);
     if (!persons.includes(found)) {
@@ -42,8 +52,16 @@ const App = () => {
     };
     setPersons(persons.concat(personObject));
     setNewName("");
-    setNewNumber("");
-    // to clear the input field after submission!
+    setNewNumber(""); // to clear the input field after submission!
+    // Add new person to server / db.json using
+    axios
+      .post("http://localhost:3001/persons", personObject)
+      .then((response) => {
+        console.log("Data posted successfully:", response.data);
+      })
+      .catch((error) => {
+        console.error("Error posting data:", error);
+      });
   };
 
   const findPerson = (event) => {
@@ -62,15 +80,6 @@ const App = () => {
       // alert(`We can not find ${event.target.value} in the phonebook`);
     }
   };
-
-  useEffect(() => {
-    axios.get("http://localhost:3001/persons").then((response) => {
-      // console.log(response.data);
-      setPersons(response.data);
-    });
-  }, []);
-
-  console.log(persons);
 
   return (
     <div>
