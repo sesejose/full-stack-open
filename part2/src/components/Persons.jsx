@@ -8,6 +8,8 @@ const Persons = (props) => {
             <div>
               {i.name}
               {i.number}
+              {/* The deletePerson(id) function in App uses the id  */}
+              <button onClick={() => props.deletePerson(i.id)}>delete</button>
             </div>
           </div>
         ))}
@@ -16,3 +18,6 @@ const Persons = (props) => {
   );
 };
 export default Persons;
+
+// The deletePerson(id) function in App uses the id
+// It's passed with the Event handler function as a parameter

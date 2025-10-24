@@ -2,8 +2,8 @@ import { useState, useEffect } from "react";
 import AddPerson from "./components/AddPerson";
 import Persons from "./components/Persons";
 import FindPerson from "./components/FindPerson";
-import axios from "axios";
-import personServices from "./services/persons";
+// import axios from "axios";
+import personsServices from "./services/persons";
 
 const App = () => {
   const [persons, setPersons] = useState([
@@ -12,8 +12,8 @@ const App = () => {
     // { name: "Dan Abramov", number: "12-43-234345", id: 3 },
     // { name: "Mary Poppendieck", number: "39-23-6423122", id: 4 },
   ]);
-  const [newNumber, setNewNumber] = useState([{ number: "040-123456" }]);
   const [newName, setNewName] = useState("");
+  const [newNumber, setNewNumber] = useState([{ number: "040-123456" }]);
   const [personFound, setPersonFound] = useState();
 
   // fetching data from server with axios and useEffect
@@ -26,7 +26,7 @@ const App = () => {
 
   // Fetching data from server with axios and useEffect using service persons.js in the MODULE
   useEffect(() => {
-    personServices.getAllPersons().then((response) => {
+    personsServices.getAllPersons().then((response) => {
       setPersons(response.data);
     });
   }, []);
@@ -54,7 +54,7 @@ const App = () => {
     const personObject = {
       name: newName,
       number: newNumber,
-      id: 1 + persons.length,
+      id: String(1 + persons.length),
     };
     setPersons(persons.concat(personObject));
     setNewName("");
@@ -68,7 +68,10 @@ const App = () => {
     //   .catch((error) => {
     //     console.error("Error posting data:", error);
     //   });
-    personServices
+
+    // Using the service instead of axios directly as above
+    // personsService is the prefix, as Context, just to add the module, the the function in the module
+    personsServices
       .addPerson(personObject)
       .then((response) => {
         console.log("Data posted successfully:", response.data);
@@ -95,13 +98,26 @@ const App = () => {
     }
   };
 
+  const deletePerson = (id) => {
+    // The id comes with the button event handler
+    // App uses the function with axios defined in the service MODULE !!!
+    // I access that function with personService imported !
+    if (window.confirm("Are you sure you want to delete this person")) {
+      personsServices.deletePerson(id).then((response) => {
+        console.log(response.data);
+      });
+    } else {
+      alert("Allright, let's keeping it.");
+    }
+  };
+
   return (
     <div>
       <FindPerson findPerson={findPerson} personFound={personFound} />
 
       <AddPerson addNewPerson={addNewPerson} handleInputName={handleInputName} handleInputPhone={handleInputPhone} />
 
-      <Persons persons={persons} />
+      <Persons persons={persons} deletePerson={deletePerson} />
     </div>
   );
 };
