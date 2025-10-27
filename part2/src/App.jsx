@@ -15,6 +15,7 @@ const App = () => {
   const [newName, setNewName] = useState("");
   const [newNumber, setNewNumber] = useState([{ number: "040-123456" }]);
   const [personFound, setPersonFound] = useState();
+  const [personToUpdate, setPersonToUpdate] = useState(null);
 
   // fetching data from server with axios and useEffect
   // useEffect(() => {
@@ -33,32 +34,44 @@ const App = () => {
 
   const handleInputName = (event) => {
     const found = persons.find((element) => element.name === event.target.value);
+    // if (found) {
+    //   setIdToDelete(found.id);
+    //   console.log(idToReplace);
+    // }
+    // const fName = found ? found.name : null;
+    // const fId = found ? found.id : null;
+    // const fNumber = found ? found.number : null;
+    // console.log(found[3]);
     if (!persons.includes(found)) {
       setNewName(event.target.value);
     } else {
-      alert(`${newName} is already added to phonebook`);
+      // alert(`${newName} is already added to phonebook`);
+      setPersonToUpdate(found);
     }
   };
 
   const handleInputPhone = (event) => {
-    const found = persons.find((element) => element.number === event.target.value);
-    if (!persons.includes(found)) {
-      setNewNumber(event.target.value);
-    } else {
-      alert(`${newNumber} is already added to phonebook`);
-    }
+    setNewNumber(event.target.value);
   };
 
   const addNewPerson = (event) => {
     event.preventDefault();
-    const personObject = {
+
+    // This is an EXISTING object to be updated (founded by name above)
+    const updatedPerson = {
+      ...personToUpdate,
+      number: newNumber,
+    };
+
+    // This is a NEW object to be created
+    const newPerson = {
       name: newName,
       number: newNumber,
       id: String(1 + persons.length),
     };
-    setPersons(persons.concat(personObject));
-    setNewName("");
-    setNewNumber(""); // to clear the input field after submission!
+    // setPersons(persons.concat(personObject));
+    // setNewName("");
+    // setNewNumber(""); // to clear the input field after submission!
     // Add new person to server / db.json using
     // axios
     //   .post("http://localhost:3001/persons", personObject)
@@ -69,16 +82,51 @@ const App = () => {
     //     console.error("Error posting data:", error);
     //   });
 
-    // Using the service instead of axios directly as above
-    // personsService is the prefix, as Context, just to add the module, the the function in the module
-    personsServices
-      .addPerson(personObject)
-      .then((response) => {
-        console.log("Data posted successfully:", response.data);
-      })
-      .catch((error) => {
-        console.error("Error posting data:", error);
-      });
+    //PUT request in persons
+    const matching = persons.find((e) => e.id === personToUpdate.id);
+    if (matching) {
+      if (window.confirm(`${updatedPerson.name} already has a phone number. Would you like to replace it?`)) {
+        personsServices.replaceNumber(personToUpdate.id, updatedPerson).then((response) => {
+          console.log(response.data);
+        });
+      } else {
+        setPersons(persons.concat(newPerson));
+        // alert("Allright, let's keep the old one.");
+        // Using the service instead of axios directly as above
+        // personsService is the prefix, as Context, just to add the module, the the function in the module
+        personsServices
+          .addPerson(newPerson)
+          .then((response) => {
+            console.log("Data posted successfully:", response.data);
+          })
+          .catch((error) => {
+            console.error("Error posting data:", error);
+          });
+      }
+      setNewName("");
+      setNewNumber(""); // to clear the input field after submission!
+    }
+
+    // if (personObject.name === newName) {
+    //   // Replacing the number if that person already has one
+    //   if (window.confirm(`${personObject.name} already has a number. Would you like to replace it?`)) {
+    //     personsServices.replaceNumber(identity, newNumber).then((response) => {
+    //       console.log(response.data);
+    //     });
+    //   } else {
+    //     // alert("Allright, let's keep the old one.");
+    //     // Using the service instead of axios directly as above
+    //     // personsService is the prefix, as Context, just to add the module, the the function in the module
+    //     personsServices
+    //       .addPerson(personObject)
+    //       .then((response) => {
+    //         console.log("Data posted successfully:", response.data);
+    //       })
+    //       .catch((error) => {
+    //         console.error("Error posting data:", error);
+    //       });
+    //   }
+    // }
   };
 
   const findPerson = (event) => {

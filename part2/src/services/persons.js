@@ -8,6 +8,10 @@ const addPerson = (newPerson) => {
   return axios.post(url, newPerson);
 };
 
+const replaceNumber = (id, newNumber) => {
+  return axios.put(`${url}/${id}`, newNumber);
+};
+
 const getAllPersons = () => {
   return axios.get(url);
 };
@@ -16,4 +20,4 @@ const deletePerson = (id) => {
   return axios.delete(`${url}/${id}`);
 };
 
-export default { addPerson, getAllPersons, deletePerson };
+export default { addPerson, getAllPersons, deletePerson, replaceNumber };
