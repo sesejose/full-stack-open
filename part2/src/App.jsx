@@ -4,6 +4,7 @@ import Persons from "./components/Persons";
 import FindPerson from "./components/FindPerson";
 // import axios from "axios";
 import personsServices from "./services/persons";
+import Notification from "./components/Notifications";
 
 const App = () => {
   const [persons, setPersons] = useState([
@@ -16,6 +17,10 @@ const App = () => {
   const [newNumber, setNewNumber] = useState([{ number: "040-123456" }]);
   const [personFound, setPersonFound] = useState();
   const [personToUpdate, setPersonToUpdate] = useState(null);
+  const [personToDelete, setPersonToDelete] = useState(null);
+  const [errorMessage, setErrorMessage] = useState("error...");
+  const [successMessage, setSuccessMessage] = useState("success...");
+  const [showNotification, setShowNotification] = useState(false);
 
   // fetching data from server with axios and useEffect
   // useEffect(() => {
@@ -146,13 +151,19 @@ const App = () => {
     }
   };
 
-  const deletePerson = (id) => {
+  const deletePerson = (id, name) => {
     // The id comes with the button event handler
     // App uses the function with axios defined in the service MODULE !!!
     // I access that function with personService imported !
-    if (window.confirm("Are you sure you want to delete this person")) {
+    if (window.confirm("Are you sure you want to delete " + `${name}`)) {
       personsServices.deletePerson(id).then((response) => {
         console.log(response.data);
+        setTimeout(() => {
+          setShowNotification(true);
+          setSuccessMessage(`${name}` + " was successfully removed from the list.");
+        }, 2000);
+        setPersons(persons.filter((n) => n.id !== id));
+        // It keeps only notes whose n.id is different from id, so it effectively removes the note(s) whose id equals the id variable (parameter defined with the map).
       });
     } else {
       alert("Allright, let's keeping it.");
@@ -161,6 +172,8 @@ const App = () => {
 
   return (
     <div>
+      {showNotification ? <Notification success={successMessage} /> : null}
+
       <FindPerson findPerson={findPerson} personFound={personFound} />
 
       <AddPerson addNewPerson={addNewPerson} handleInputName={handleInputName} handleInputPhone={handleInputPhone} />

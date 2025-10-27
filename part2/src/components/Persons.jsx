@@ -9,7 +9,7 @@ const Persons = (props) => {
               {i.name}
               {i.number}
               {/* The deletePerson(id) function in App uses the id  */}
-              <button onClick={() => props.deletePerson(i.id)}>delete</button>
+              <button onClick={() => props.deletePerson(i.id, i.name)}>delete</button>
             </div>
           </div>
         ))}
