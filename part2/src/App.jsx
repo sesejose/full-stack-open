@@ -17,8 +17,6 @@ const App = () => {
   const [newNumber, setNewNumber] = useState([{ number: "040-123456" }]);
   const [personFound, setPersonFound] = useState();
   const [personToUpdate, setPersonToUpdate] = useState(null);
-  const [personToDelete, setPersonToDelete] = useState(null);
-  const [errorMessage, setErrorMessage] = useState("error...");
   const [successMessage, setSuccessMessage] = useState("success...");
   const [showNotification, setShowNotification] = useState(false);
 
@@ -62,21 +60,6 @@ const App = () => {
   const addNewPerson = (event) => {
     event.preventDefault();
 
-    // This is an EXISTING object to be updated (founded by name above)
-    const updatedPerson = {
-      ...personToUpdate,
-      number: newNumber,
-    };
-
-    // This is a NEW object to be created
-    const newPerson = {
-      name: newName,
-      number: newNumber,
-      id: String(1 + persons.length),
-    };
-    // setPersons(persons.concat(personObject));
-    // setNewName("");
-    // setNewNumber(""); // to clear the input field after submission!
     // Add new person to server / db.json using
     // axios
     //   .post("http://localhost:3001/persons", personObject)
@@ -88,51 +71,67 @@ const App = () => {
     //   });
 
     //PUT request in persons
-    const matching = persons.find((e) => e.id === personToUpdate.id);
+    // Using the values I already have! newName, defined in handleInputName
+    const matching = persons.find((element) => element.name === newName);
+    // If true
     if (matching) {
+      // Update existing
+      // With this I don't need to check if it is null or not, the state is already rendered so I can use its properties
+      const updatedPerson = {
+        ...matching,
+        number: newNumber,
+        id: matching.id,
+      };
       if (window.confirm(`${updatedPerson.name} already has a phone number. Would you like to replace it?`)) {
         personsServices.replaceNumber(personToUpdate.id, updatedPerson).then((response) => {
           console.log(response.data);
         });
-      } else {
-        setPersons(persons.concat(newPerson));
-        // alert("Allright, let's keep the old one.");
-        // Using the service instead of axios directly as above
-        // personsService is the prefix, as Context, just to add the module, the the function in the module
-        personsServices
-          .addPerson(newPerson)
-          .then((response) => {
-            console.log("Data posted successfully:", response.data);
-          })
-          .catch((error) => {
-            console.error("Error posting data:", error);
-          });
       }
-      setNewName("");
-      setNewNumber(""); // to clear the input field after submission!
+    } else {
+      // alert("Allright, let's keep the old one.");
+      // Using the service instead of axios directly as above
+      // personsService is the prefix, as Context, just to add the module, the the function in the module
+      // Adding the newPeron
+      const newPerson = {
+        name: newName,
+        number: newNumber,
+        id: String(1 + persons.length),
+      };
+      personsServices
+        .addPerson(newPerson)
+        .then((response) => {
+          console.log("Data posted successfully:", response.data);
+        })
+        .catch((error) => {
+          console.error("Error posting data:", error);
+        });
+      setPersons(persons.concat(newPerson));
     }
-
-    // if (personObject.name === newName) {
-    //   // Replacing the number if that person already has one
-    //   if (window.confirm(`${personObject.name} already has a number. Would you like to replace it?`)) {
-    //     personsServices.replaceNumber(identity, newNumber).then((response) => {
-    //       console.log(response.data);
-    //     });
-    //   } else {
-    //     // alert("Allright, let's keep the old one.");
-    //     // Using the service instead of axios directly as above
-    //     // personsService is the prefix, as Context, just to add the module, the the function in the module
-    //     personsServices
-    //       .addPerson(personObject)
-    //       .then((response) => {
-    //         console.log("Data posted successfully:", response.data);
-    //       })
-    //       .catch((error) => {
-    //         console.error("Error posting data:", error);
-    //       });
-    //   }
-    // }
+    setNewName("");
+    setNewNumber("");
   };
+
+  // if (personObject.name === newName) {
+  //   // Replacing the number if that person already has one
+  //   if (window.confirm(`${personObject.name} already has a number. Would you like to replace it?`)) {
+  //     personsServices.replaceNumber(identity, newNumber).then((response) => {
+  //       console.log(response.data);
+  //     });
+  //   } else {
+  //     // alert("Allright, let's keep the old one.");
+  //     // Using the service instead of axios directly as above
+  //     // personsService is the prefix, as Context, just to add the module, the the function in the module
+  //     personsServices
+  //       .addPerson(personObject)
+  //       .then((response) => {
+  //         console.log("Data posted successfully:", response.data);
+  //       })
+  //       .catch((error) => {
+  //         console.error("Error posting data:", error);
+  //       });
+  //   }
+  // }
+  // };
 
   const findPerson = (event) => {
     //Split fullname in Array of strings
