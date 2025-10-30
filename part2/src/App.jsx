@@ -36,6 +36,8 @@ const App = () => {
   }, []);
 
   const handleInputName = (event) => {
+    const inputValue = event.target.value;
+    setNewName(inputValue);
     const found = persons.find((element) => element.name === event.target.value);
     // if (found) {
     //   setIdToDelete(found.id);
@@ -45,11 +47,11 @@ const App = () => {
     // const fId = found ? found.id : null;
     // const fNumber = found ? found.number : null;
     // console.log(found[3]);
-    if (!persons.includes(found)) {
-      setNewName(event.target.value);
+    if (found) {
+      setPersonToUpdate(found);
     } else {
       // alert(`${newName} is already added to phonebook`);
-      setPersonToUpdate(found);
+      setPersonToUpdate(null); // Clear if not found
     }
   };
 
