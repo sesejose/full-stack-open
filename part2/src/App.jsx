@@ -19,6 +19,8 @@ const App = () => {
   const [personToUpdate, setPersonToUpdate] = useState(null);
   const [successMessage, setSuccessMessage] = useState("success...");
   const [showNotification, setShowNotification] = useState(false);
+  const [errorMessage, setErrorMessage] = useState("error...");
+  const [showError, setShowError] = useState(false);
 
   // fetching data from server with axios and useEffect
   // useEffect(() => {
@@ -85,9 +87,19 @@ const App = () => {
         id: matching.id,
       };
       if (window.confirm(`${updatedPerson.name} already has a phone number. Would you like to replace it?`)) {
-        personsServices.replaceNumber(personToUpdate.id, updatedPerson).then((response) => {
-          console.log(response.data);
-        });
+        personsServices
+          .replaceNumber(personToUpdate.id, updatedPerson)
+          .then((response) => {
+            console.log(response.data);
+          })
+          .catch((error) => {
+            console.error("Error updating data:", error);
+
+            setTimeout(() => {
+              setShowError(true);
+              setErrorMessage(`${personToUpdate.name}` + " has already been removed from the list.");
+            }, 1000);
+          });
       }
     } else {
       // alert("Allright, let's keep the old one.");
@@ -174,6 +186,7 @@ const App = () => {
   return (
     <div>
       {showNotification ? <Notification success={successMessage} /> : null}
+      {showError ? <Notification error={errorMessage} /> : null}
 
       <FindPerson findPerson={findPerson} personFound={personFound} />
 
