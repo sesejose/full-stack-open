@@ -5,6 +5,8 @@ import FindPerson from "./components/FindPerson";
 // import axios from "axios";
 import personsServices from "./services/persons";
 import Notification from "./components/Notifications";
+import Countries from "./Countries";
+import countriesServices from "./services/countries";
 
 const App = () => {
   const [persons, setPersons] = useState([
@@ -183,8 +185,57 @@ const App = () => {
     }
   };
 
+  // ---------------    Show / Find Countries    -----------------------
+
+  // const all = "https://studies.cs.helsinki.fi/restcountries/api/all";
+  const [countries, setCountries] = useState([]);
+  const [countryFound, setCountryFound] = useState();
+  const [countryName, setCountryName] = useState("");
+  const [matchingElements, setMatchingElements] = useState([]);
+
+  // Get All countries
+
+  useEffect(() => {
+    countriesServices.getAllCountries().then((response) => {
+      setCountries(response.data);
+    });
+  }, []);
+
+  // Find country and define props and states to pass to Countries.jsx
+
+  const findCountry = (event) => {
+    const target = event.target.value;
+    const firstLetter = target.charAt(0).toUpperCase();
+    const restOfWord = target.slice(1);
+    const targetFormatted = firstLetter + restOfWord;
+    setCountryName(targetFormatted);
+    const found = countries.find((element) => element.name.common === targetFormatted);
+    //   console.log("Target", target, "Found", found);
+    if (countries.includes(found)) {
+      countriesServices.showFoundCountry(targetFormatted).then((response) => {
+        setCountryFound(response.data);
+        // Here the data is the object of the array countries fetched from the API url name
+      });
+    } else {
+      console.log("No country found");
+    }
+
+    // Input onChange also set the matchingTarget state, if target / input is not empty
+    // filter those countries whose name includes the target string
+    // If the target is empty, clear the countryFound state
+    // Whatever it is, I pass the matchingTarget state to Countries.jsx as prop to show the list
+    if (target) {
+      setMatchingElements(countries.filter((element) => element.name.common.includes(target)));
+      console.log("matching works");
+    } else {
+      setMatchingElements([]);
+    }
+  };
+
   return (
     <div>
+      <Countries countries={countries} findCountry={findCountry} countryFound={countryFound} countryName={countryName} matchingElements={matchingElements} />
+
       {showNotification ? <Notification success={successMessage} /> : null}
       {showError ? <Notification error={errorMessage} /> : null}
 
