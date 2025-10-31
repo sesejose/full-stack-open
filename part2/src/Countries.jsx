@@ -16,9 +16,7 @@ export default function Countries(props) {
             <p>Area: {props.countryFound.area}</p>
             <h3>Languages:</h3>
             <ul>
-              {/* {props.countryFound.languages.map((language) => (
-                <li key={language}>{language}</li>
-              ))} */}
+              {/* Object.values(object) method */}
               {Object.values(props.countryFound.languages).map((language) => (
                 <li key={language}>{language}</li>
               ))}
@@ -31,14 +29,20 @@ export default function Countries(props) {
               <p>Too many matches, specify another filter</p>
             ) : (
               props.matchingElements.map((e) => {
-                return <div key={e.name.common}>{e.name.common}</div>;
+                // the showCountry function in App.jsx uses the name property of the country object
+                return (
+                  <div key={e.name.common}>
+                    {e.name.common}
+                    <button onClick={() => props.showCountry(e.name.common)}>show</button>
+                  </div>
+                );
               })
             )}
           </div>
         )}
       </div>
-      {/* If countryFound shows object properties values*/}
-      {/* If it is not countryFound in App, so display the matching names (state in App as wel), but before check its lenght if it is larger than 10, if so, suggest another filter, otherwise show just the names */}
+      {/* If countryFound --> shows object properties values*/}
+      {/* If it is not  --> so display the matching names (state in App ), but before check its lenght if it is larger than 10, if so, suggest another filter, otherwise show just the names */}
     </div>
   );
 }

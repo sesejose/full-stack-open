@@ -201,7 +201,7 @@ const App = () => {
     });
   }, []);
 
-  // Find country and define props and states to pass to Countries.jsx
+  // Find country, define props and states to pass to Countries.jsx
 
   const findCountry = (event) => {
     const target = event.target.value;
@@ -210,19 +210,19 @@ const App = () => {
     const targetFormatted = firstLetter + restOfWord;
     setCountryName(targetFormatted);
     const found = countries.find((element) => element.name.common === targetFormatted);
-    //   console.log("Target", target, "Found", found);
-    if (countries.includes(found)) {
-      countriesServices.showFoundCountry(targetFormatted).then((response) => {
+    if (found) {
+      countriesServices.showFoundCountry(target).then((response) => {
         setCountryFound(response.data);
         // Here the data is the object of the array countries fetched from the API url name
       });
     } else {
       console.log("No country found");
+      setCountryFound(null);
+      // If the target is empty, clear the countryFound state
     }
 
     // Input onChange also set the matchingTarget state, if target / input is not empty
     // filter those countries whose name includes the target string
-    // If the target is empty, clear the countryFound state
     // Whatever it is, I pass the matchingTarget state to Countries.jsx as prop to show the list
     if (target) {
       setMatchingElements(countries.filter((element) => element.name.common.includes(target)));
@@ -232,9 +232,16 @@ const App = () => {
     }
   };
 
+  const showCountry = (name) => {
+    countriesServices.showFoundCountry(name).then((response) => {
+      setCountryFound(response.data);
+    });
+    console.log("Show country works");
+  };
+
   return (
     <div>
-      <Countries countries={countries} findCountry={findCountry} countryFound={countryFound} countryName={countryName} matchingElements={matchingElements} />
+      <Countries countries={countries} findCountry={findCountry} countryFound={countryFound} countryName={countryName} matchingElements={matchingElements} showCountry={showCountry} />
 
       {showNotification ? <Notification success={successMessage} /> : null}
       {showError ? <Notification error={errorMessage} /> : null}
