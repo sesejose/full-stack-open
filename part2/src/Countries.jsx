@@ -22,6 +22,13 @@ export default function Countries(props) {
               ))}
             </ul>
             <img src={props.countryFound.flags.png} alt={`Flag of ${props.countryFound.name.common}`} width="200" />
+            {/* Weather Info */}
+            <div>
+              <h2>Weather in {props.countryFound.capital}</h2>
+              <p>Temperature: {props.weatherInfo.current.temp_c} °C</p>
+              <img src={props.weatherInfo.current.condition.icon} alt={props.weatherInfo.current.condition.text} />
+              <p>Wind: {props.weatherInfo.current.wind_kph} kph</p>
+            </div>
           </div>
         ) : (
           <div>

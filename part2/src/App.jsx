@@ -192,6 +192,7 @@ const App = () => {
   const [countryFound, setCountryFound] = useState();
   const [countryName, setCountryName] = useState("");
   const [matchingElements, setMatchingElements] = useState([]);
+  const [weatherInfo, setWeatherInfo] = useState([]);
 
   // Get All countries
 
@@ -239,18 +240,29 @@ const App = () => {
     console.log("Show country works");
   };
 
+  useEffect(() => {
+    getWeather(countryName);
+  }, [countryName]);
+
+  const getWeather = (countryName) => {
+    countriesServices.getWeather(countryName).then((response) => {
+      console.log("Country Forecast Info:", response.data);
+      setWeatherInfo(response.data);
+    });
+  };
+
   return (
     <div>
-      <Countries countries={countries} findCountry={findCountry} countryFound={countryFound} countryName={countryName} matchingElements={matchingElements} showCountry={showCountry} />
+      <Countries countries={countries} findCountry={findCountry} countryFound={countryFound} countryName={countryName} matchingElements={matchingElements} showCountry={showCountry} getWeather={getWeather} weatherInfo={weatherInfo} />
 
       {showNotification ? <Notification success={successMessage} /> : null}
       {showError ? <Notification error={errorMessage} /> : null}
 
-      <FindPerson findPerson={findPerson} personFound={personFound} />
+      {/* <FindPerson findPerson={findPerson} personFound={personFound} /> */}
 
-      <AddPerson addNewPerson={addNewPerson} handleInputName={handleInputName} handleInputPhone={handleInputPhone} />
+      {/* <AddPerson addNewPerson={addNewPerson} handleInputName={handleInputName} handleInputPhone={handleInputPhone} /> */}
 
-      <Persons persons={persons} deletePerson={deletePerson} />
+      {/* <Persons persons={persons} deletePerson={deletePerson} /> */}
     </div>
   );
 };
