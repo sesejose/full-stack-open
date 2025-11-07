@@ -1,0 +1,30 @@
+{
+  "name": "part3",
+  "version": "1.0.0",
+  "description": "",
+  "keywords": [
+    "Simple",
+    "Web",
+    "Server"
+  ],
+  "homepage": "https://github.com/sesejose/full-stack-open#readme",
+  "bugs": {
+    "url": "https://github.com/sesejose/full-stack-open/issues"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/sesejose/full-stack-open.git"
+  },
+  "license": "ISC",
+  "author": "José Francisco Sesé",
+  "type": "commonjs",
+  "main": "index.js",
+  "scripts": {
+    "start": "node index.js",
+    "test": "test",
+    "dev": "node --watch index.js"
+  },
+  "dependencies": {
+    "express": "^5.1.0"
+  }
+}
