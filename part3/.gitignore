@@ -2,3 +2,7 @@
 # Because the "node_modules" is created using "npm init", it will not be excluded when you are trying to add your code to git using "git add ."
 
 node_modules
+.vite/
+dist/
+build/
+.env
