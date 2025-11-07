@@ -40,7 +40,7 @@ app.get("/api/persons", (request, response) => {
   response.json(persons);
 });
 
-// Getting all persons
+// Getting person by id
 app.get("/api/persons/:id", (request, response) => {
   const id = request.params.id;
   const person = persons.find((person) => person.id === id);
@@ -52,12 +52,25 @@ app.get("/api/persons/:id", (request, response) => {
   }
 });
 
-// Deleting a person
+// Deleting a person by id
 app.delete("/api/persons/:id", (request, response) => {
   const id = request.params.id;
   persons = persons.filter((person) => person.id !== id);
   response.status(204).end();
   //If deleting the resource is successful, meaning that the note exists and is removed, we respond to the request with the status code 204 no content and return no data with the response.
+});
+
+// Creating a new person
+app.post("/api/persons/", (request, response) => {
+  const newId = (Math.random() * 10000).toFixed(0);
+  const namenewName = "José Francisco Sesé";
+  const newNumber = "12345678";
+  const newPerson = {
+    id: newId,
+    name: namenewName,
+    number: newNumber,
+  };
+  response.json(newPerson);
 });
 
 // i define the /info route and variables for the data I need to display
