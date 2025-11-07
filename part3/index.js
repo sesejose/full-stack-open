@@ -63,15 +63,33 @@ app.delete("/api/persons/:id", (request, response) => {
 // Creating a new person
 app.post("/api/persons/", (request, response) => {
   const newId = (Math.random() * 10000).toFixed(0);
-  const namenewName = "José Francisco Sesé";
+  const newName = "Arto Hellas";
   const newNumber = "12345678";
   const newPerson = {
     id: newId,
-    name: namenewName,
+    name: newName,
     number: newNumber,
   };
+  // persons = persons.concat(newPerson);
+  if (!newPerson.name || !newPerson.number) {
+    return response.status(400).json({
+      error: "The name or number is missing",
+    });
+  }
+  if (persons.find((person) => person.name === newPerson.name)) {
+    return response.status(400).json({
+      error: "name must be unique",
+    });
+  }
+
+  persons = persons.concat(newPerson);
   response.json(newPerson);
 });
+
+// Testing with Postman,
+// When it sends: POST http://localhost:3001/api/persons
+// Express looks at your code and finds a matching route: app.post('/api/persons', (req, res) => { this code runs...})
+// So it’s NOT Postman choosing the function. It’s Express matching the request’s METHOD + PATH.
 
 // i define the /info route and variables for the data I need to display
 // I can use express routing in info.js file as well - but let's keep it simple for now
