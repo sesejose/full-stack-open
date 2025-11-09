@@ -1,9 +1,18 @@
 const express = require("express");
+const morgan = require("morgan");
 const app = express();
 
 // json-parser should be here, before the route definitions!!!!!!!!
 // Without the json-parser, the body property would be undefined. The json-parser takes the JSON data of a request, transforms it into a JavaScript object and then attaches it to the body property of the request object before the route handler is called.
 app.use(express.json());
+
+// app.use(morgan("tiny"));
+
+// Custom Morgan token for body
+morgan.token("body", (req) => JSON.stringify(req.body));
+
+// Log requests including the POST body
+app.use(morgan(":method :url :status :res[content-length] - :response-time ms :body"));
 
 // In-memory data storage
 
@@ -61,27 +70,25 @@ app.delete("/api/persons/:id", (request, response) => {
 });
 
 // Creating a new person
-app.post("/api/persons/", (request, response) => {
+// I needed to Extract name and number from request.body ( Postman )
+// Working local and hard-coded newPerson didn't worked
+// POST route never used req.body, I was ignoring the body and using hard-coded newName and newNumber
+// Continued with that aproach will required rewrite the token
+// morgan.token("body", (req, res) => JSON.stringify(res.locals.newPerson));
+// and response.locals.newPerson = newPerson;
+app.post("/api/persons", (request, response) => {
   const newId = (Math.random() * 10000).toFixed(0);
-  const newName = "Arto Hellas";
-  const newNumber = "12345678";
-  const newPerson = {
-    id: newId,
-    name: newName,
-    number: newNumber,
-  };
-  // persons = persons.concat(newPerson);
-  if (!newPerson.name || !newPerson.number) {
-    return response.status(400).json({
-      error: "The name or number is missing",
-    });
-  }
-  if (persons.find((person) => person.name === newPerson.name)) {
-    return response.status(400).json({
-      error: "name must be unique",
-    });
+  const { name, number } = request.body;
+
+  if (!name || !number) {
+    return response.status(400).json({ error: "The name or number is missing" });
   }
 
+  if (persons.find((person) => person.name === name)) {
+    return response.status(400).json({ error: "name must be unique" });
+  }
+
+  const newPerson = { id: newId, name, number };
   persons = persons.concat(newPerson);
   response.json(newPerson);
 });
@@ -93,6 +100,7 @@ app.post("/api/persons/", (request, response) => {
 
 // i define the /info route and variables for the data I need to display
 // I can use express routing in info.js file as well - but let's keep it simple for now
+
 app.get("/info", (request, response) => {
   const amount = persons.length;
   const time = new Date();
