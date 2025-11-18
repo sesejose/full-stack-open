@@ -1,6 +1,9 @@
 const express = require("express");
 const morgan = require("morgan");
 const app = express();
+// const cors = require("cors");
+
+// app.use(cors());
 
 // json-parser should be here, before the route definitions!!!!!!!!
 // Without the json-parser, the body property would be undefined. The json-parser takes the JSON data of a request, transforms it into a JavaScript object and then attaches it to the body property of the request object before the route handler is called.
@@ -40,9 +43,9 @@ let persons = [
 ];
 
 // Next, we define the routes to the application.
-// app.get("/", (request, response) => {
-//   response.send("<h1>Hello World!</h1>");
-// });
+app.get("/", (request, response) => {
+  response.send("<h1>Hello World!</h1>");
+});
 
 // Getting all persons
 app.get("/api/persons", (request, response) => {
