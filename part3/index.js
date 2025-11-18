@@ -40,9 +40,9 @@ let persons = [
 ];
 
 // Next, we define the routes to the application.
-app.get("/", (request, response) => {
-  response.send("<h1>Hello World!</h1>");
-});
+// app.get("/", (request, response) => {
+//   response.send("<h1>Hello World!</h1>");
+// });
 
 // Getting all persons
 app.get("/api/persons", (request, response) => {
