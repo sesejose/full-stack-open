@@ -1,5 +1,7 @@
 import axios from "axios";
 const url = "https://phonebook-backend-wm39.onrender.com/api/persons";
+// url is the endpoint of the backend server defined in index.js and Express
+// Deployed on Render.com, defined in a webservice there.
 
 // The function has an argument newPerson representing the new person to be added
 // It is newPeron because in App.jsx we call addPerson(personObject)
