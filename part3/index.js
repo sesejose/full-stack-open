@@ -2,7 +2,7 @@ const express = require("express");
 const morgan = require("morgan");
 const app = express();
 const cors = require("cors");
-app.use(express.static("dist")); // Add this line to serve static files
+app.use(express.static("part2_plus_phonebook/dist")); // Add this line to serve static files
 
 app.use(cors());
 
@@ -44,9 +44,9 @@ let persons = [
 ];
 
 // Next, we define the routes to the application.
-app.get("/", (request, response) => {
-  response.send("<h1>Hello World!</h1>");
-});
+// app.get("/", (request, response) => {
+//   response.send("<h1>Hello World!</h1>");
+// });
 
 // Getting all persons
 app.get("/api/persons", (request, response) => {
