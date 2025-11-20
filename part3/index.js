@@ -2,7 +2,7 @@ const express = require("express");
 const morgan = require("morgan");
 const app = express();
 const cors = require("cors");
-app.use(express.static("part2_plus_phonebook/dist")); // Add this line to serve static files
+app.use(express.static("frontend/dist")); // Add this line to serve static files
 
 app.use(cors());
 
