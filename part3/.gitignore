@@ -3,6 +3,5 @@
 
 node_modules
 .vite/
-dist/
 build/
 .env
