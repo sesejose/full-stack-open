@@ -52,10 +52,18 @@ app.use(morgan(":method :url :status :res[content-length] - :response-time ms :b
 // });
 
 // Getting all persons
-app.get("/api/persons", (request, response) => {
-  Person.find({}).then((persons) => {
-    response.json(persons);
-  });
+// app.get("/api/persons", (request, response) => {
+//   Person.find({}).then((persons) => {
+//     response.json(persons);
+//   });
+// });
+// ********* Using Mongoose methods *********
+app.get("/api/persons", (request, response, next) => {
+  Person.find({})
+    .then((persons) => {
+      response.json(persons);
+    })
+    .catch((error) => next(error));
 });
 
 // Getting person by id
@@ -71,10 +79,22 @@ app.get("/api/persons", (request, response) => {
 // });
 //********* Using Mongoose methods *********
 // Using Mongoose's findById method, fetching an individual person gets changed into the following:
-app.get("/api/persons/:id", (request, response) => {
-  Person.findById(request.params.id).then((person) => {
-    response.json(person);
-  });
+app.get("/api/persons/:id", (request, response, next) => {
+  Person.findById(request.params.id)
+    .then((person) => {
+      if (person) {
+        response.json(person);
+      } else {
+        response.status(404).end(); // if a person with the given id doesn't exist, the server will respond to the request with the HTTP status code 404 not found.
+      }
+    })
+    // .catch((error) => {
+    //   // simple catch block to handle cases where the promise returned by the findById method is rejected:
+    //   console.log(error); // When dealing with Promises, it's almost always a good idea to add error and exception handling. Otherwise, you will find yourself dealing with strange bugs.
+    //   response.status(400).send({ error: "malformatted id" }); // The appropriate status code for the situation is 400 Bad Request (and NOT 500) because the situation fits the description perfectly:
+    //   // I've just comment it because I will handle errors in a dedicated middleware later
+    // });
+    .catch((error) => next(error));
 });
 
 // ******** Deleting a person by id *******
@@ -82,8 +102,17 @@ app.get("/api/persons/:id", (request, response) => {
 //   const id = request.params.id;
 //   persons = persons.filter((person) => person.id !== id);
 //   response.status(204).end();
-//   //If deleting the resource is successful, meaning that the note exists and is removed, we respond to the request with the status code 204 no content and return no data with the response.
+//   //If deleting the resource is successful, meaning that the person exists and is removed, we respond to the request with the status code 204 no content and return no data with the response.
 // });
+
+// ********* Update with Express method *********
+app.delete("/api/persons/:id", (request, response, next) => {
+  Person.findByIdAndDelete(request.params.id)
+    .then((result) => {
+      response.status(204).end();
+    })
+    .catch((error) => next(error));
+});
 
 // ********* Creating a new person *********
 // I needed to Extract name and number from request.body ( Postman )
@@ -164,6 +193,48 @@ app.post("/api/persons", (request, response) => {
 //      <p>${time}</p>`
 //   );
 // });
+
+// ********* Using Mongoose methods *********
+app.get("/info", (request, response, next) => {
+  Person.countDocuments({})
+    .then((count) => {
+      const time = new Date();
+      response.send(
+        `<p>Phonebook has info for ${count} people</p>
+         <p>${time}</p>`
+      );
+    })
+    .catch((error) => next(error));
+});
+
+// ********* Find a person with Mongoose method findByIdAndUpdate *********
+app.put("/api/persons/:id", (request, response, next) => {
+  const body = request.body;
+  // This is the updated person data sent by the client in the request body
+  const person = {
+    name: body.name,
+    number: body.number,
+  };
+  Person.findByIdAndUpdate(request.params.id, person, { new: true })
+    .then((updatedPerson) => {
+      response.json(updatedPerson);
+    })
+    .catch((error) => next(error));
+});
+
+// ********* Middleware for handling errors *********
+const errorHandler = (error, request, response, next) => {
+  console.error(error.message);
+
+  if (error.name === "CastError") {
+    return response.status(400).send({ error: "malformatted id" });
+  }
+
+  next(error);
+};
+
+// this has to be the last loaded middleware, also all the routes should be registered before this!
+app.use(errorHandler);
 
 // PORT definition and server start
 // const PORT = 3001;

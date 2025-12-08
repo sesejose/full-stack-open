@@ -253,14 +253,14 @@ const App = () => {
 
   return (
     <div>
-      <Countries countries={countries} findCountry={findCountry} countryFound={countryFound} countryName={countryName} matchingElements={matchingElements} showCountry={showCountry} getWeather={getWeather} weatherInfo={weatherInfo} />
+      {/* <Countries countries={countries} findCountry={findCountry} countryFound={countryFound} countryName={countryName} matchingElements={matchingElements} showCountry={showCountry} getWeather={getWeather} weatherInfo={weatherInfo} /> */}
 
       {showNotification ? <Notification success={successMessage} /> : null}
       {showError ? <Notification error={errorMessage} /> : null}
 
-      {/* <FindPerson findPerson={findPerson} personFound={personFound} /> */}
+      <FindPerson findPerson={findPerson} personFound={personFound} />
 
-      {/* <AddPerson addNewPerson={addNewPerson} handleInputName={handleInputName} handleInputPhone={handleInputPhone} /> */}
+      <AddPerson addNewPerson={addNewPerson} handleInputName={handleInputName} handleInputPhone={handleInputPhone} />
 
       <Persons persons={persons} deletePerson={deletePerson} />
     </div>
