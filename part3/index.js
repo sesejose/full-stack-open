@@ -154,7 +154,7 @@ app.delete("/api/persons/:id", (request, response, next) => {
 // });
 
 //*********  I've destructured name and number but then tried to use body.content (which doesn't exist). */
-app.post("/api/persons", (request, response) => {
+app.post("/api/persons", (request, response, next) => {
   const body = request.body; // Define body first
 
   // if (!body.name || !body.number) {
@@ -174,7 +174,8 @@ app.post("/api/persons", (request, response) => {
   person
     .save()
     .then((savedPerson) => response.json(savedPerson))
-    .catch((error) => response.status(500).json({ error: error.message }));
+    // .catch((error) => response.status(500).json({ error: error.message }));
+    .catch((error) => next(error));
 });
 
 // Testing with Postman,
@@ -215,7 +216,10 @@ app.put("/api/persons/:id", (request, response, next) => {
     name: body.name,
     number: body.number,
   };
-  Person.findByIdAndUpdate(request.params.id, person, { new: true })
+  // { new: true }, que hará que nuestro controlador de eventos sea llamado con el nuevo documento modificado en lugar del original.
+
+  // Mongoose validators are turned OFF by default when using findByIdAndUpdate (and other update methods)!
+  Person.findByIdAndUpdate(request.params.id, person, { new: true, runValidators: true })
     .then((updatedPerson) => {
       response.json(updatedPerson);
     })
@@ -228,6 +232,8 @@ const errorHandler = (error, request, response, next) => {
 
   if (error.name === "CastError") {
     return response.status(400).send({ error: "malformatted id" });
+  } else if (error.name === "ValidationError") {
+    return response.status(400).json({ error: error.message });
   }
 
   next(error);

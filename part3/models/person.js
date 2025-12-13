@@ -23,9 +23,26 @@ mongoose
 
 const personSchema = new mongoose.Schema({
   //   id: String,
-  name: String,
-  number: String,
+  name: {
+    type: String,
+    minLength: 3,
+  },
+  number: {
+    type: String,
+    minLength: 8,
+    validate: {
+      validator: function (v) {
+        if (typeof v !== "string") return false;
+
+        // Pattern: at least 2 digits, hyphen, exactly 8 digits
+        return /^\d{2,}-\d{8}$/.test(v);
+      },
+      message: (props) => `${props.value} is not a valid phone number!`,
+    },
+    required: [true, "User phone number required"],
+  },
 });
+
 // In the Person model definition, the first "Person" parameter is the singular name of the model.
 const Person = mongoose.model("Person", personSchema);
 

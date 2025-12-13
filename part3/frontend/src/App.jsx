@@ -116,10 +116,19 @@ const App = () => {
       personsServices
         .addPerson(newPerson)
         .then((response) => {
-          console.log("Data posted successfully:", response.data);
+          setTimeout(() => {
+            setShowNotification(true);
+            setSuccessMessage(`${response.data.name}` + " was successfully added to the list.");
+          }, 2000);
+          // console.log("Data posted successfully:", response.data);
         })
         .catch((error) => {
-          console.error("Error posting data:", error);
+          // console.error("Error posting data:", error);
+          console.log(error.response.data.error);
+          setTimeout(() => {
+            setShowError(true);
+            setErrorMessage(error.response.data.error);
+          }, 1000);
         });
       setPersons(persons.concat(newPerson));
     }
