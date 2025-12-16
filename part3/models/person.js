@@ -1,8 +1,8 @@
-const mongoose = require("mongoose");
+const mongoose = require('mongoose')
 
-const url = process.env.MONGODB_URI;
+const url = process.env.MONGODB_URI
 
-mongoose.set("strictQuery", false);
+mongoose.set('strictQuery', false)
 
 // Connect is the method that open s the connection between your Node.js and MongoDB database.
 // The family: 4 option forces the use of IPv4, which can help avoid certain network issues.
@@ -11,11 +11,11 @@ mongoose
   .connect(url, { family: 4 })
 
   .then((result) => {
-    console.log("connected to MongoDB");
+    console.log('connected to MongoDB')
   })
   .catch((error) => {
-    console.log("error connecting to MongoDB:", error.message);
-  });
+    console.log('error connecting to MongoDB:', error.message)
+  })
 
 // After establishing the connection, define the schema and model
 // First we define the schema for a person that is stored in the personSchema variable.
@@ -32,28 +32,28 @@ const personSchema = new mongoose.Schema({
     minLength: 8,
     validate: {
       validator: function (v) {
-        if (typeof v !== "string") return false;
+        if (typeof v !== 'string') return false
 
         // Pattern: at least 2 digits, hyphen, exactly 8 digits
-        return /^\d{2,}-\d{8}$/.test(v);
+        return /^\d{2,}-\d{8}$/.test(v)
       },
       message: (props) => `${props.value} is not a valid phone number!`,
     },
-    required: [true, "User phone number required"],
+    required: [true, 'User phone number required'],
   },
-});
+})
 
 // In the Person model definition, the first "Person" parameter is the singular name of the model.
-const Person = mongoose.model("Person", personSchema);
+const Person = mongoose.model('Person', personSchema)
 
 // Transforming the returned object when toJSON is called
-personSchema.set("toJSON", {
+personSchema.set('toJSON', {
   transform: (document, returnedObject) => {
-    returnedObject.id = returnedObject._id.toString();
-    delete returnedObject._id;
-    delete returnedObject.__v;
+    returnedObject.id = returnedObject._id.toString()
+    delete returnedObject._id
+    delete returnedObject.__v
   },
-});
+})
 
 // Exporting the Model to use in index.js
-module.exports = mongoose.model("Person", personSchema);
+module.exports = mongoose.model('Person', personSchema)

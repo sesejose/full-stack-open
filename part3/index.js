@@ -1,25 +1,25 @@
-require("dotenv").config(); // Always at the very top
-const express = require("express");
-const Person = require("./models/person"); // Import the Person model
-const morgan = require("morgan");
-const app = express();
-const cors = require("cors");
-app.use(express.static("frontend/dist")); // Add this line to serve static files
+require('dotenv').config() // Always at the very top
+const express = require('express')
+const Person = require('./models/person') // Import the Person model
+const morgan = require('morgan')
+const app = express()
+const cors = require('cors')
+app.use(express.static('frontend/dist')) // Add this line to serve static files
 
-app.use(cors());
+app.use(cors())
 
 // json-parser should be here, before the route definitions (app.get, app.post, etc))
 // Without the json-parser, the body property would be undefined.
 // The json-parser takes the JSON data of a request, transforms it into a JavaScript object and then attaches it to the body property of the request object before the route handler is called.
-app.use(express.json());
+app.use(express.json())
 
 // app.use(morgan("tiny"));
 
 // Custom Morgan token for body
-morgan.token("body", (req) => JSON.stringify(req.body));
+morgan.token('body', (req) => JSON.stringify(req.body))
 
 // Log requests including the POST body
-app.use(morgan(":method :url :status :res[content-length] - :response-time ms :body"));
+app.use(morgan(':method :url :status :res[content-length] - :response-time ms :body'))
 
 // In-memory data storage
 
@@ -58,13 +58,13 @@ app.use(morgan(":method :url :status :res[content-length] - :response-time ms :b
 //   });
 // });
 // ********* Using Mongoose methods *********
-app.get("/api/persons", (request, response, next) => {
+app.get('/api/persons', (request, response, next) => {
   Person.find({})
     .then((persons) => {
-      response.json(persons);
+      response.json(persons)
     })
-    .catch((error) => next(error));
-});
+    .catch((error) => next(error))
+})
 
 // Getting person by id
 // app.get("/api/persons/:id", (request, response) => {
@@ -79,13 +79,13 @@ app.get("/api/persons", (request, response, next) => {
 // });
 //********* Using Mongoose methods *********
 // Using Mongoose's findById method, fetching an individual person gets changed into the following:
-app.get("/api/persons/:id", (request, response, next) => {
+app.get('/api/persons/:id', (request, response, next) => {
   Person.findById(request.params.id)
     .then((person) => {
       if (person) {
-        response.json(person);
+        response.json(person)
       } else {
-        response.status(404).end(); // if a person with the given id doesn't exist, the server will respond to the request with the HTTP status code 404 not found.
+        response.status(404).end() // if a person with the given id doesn't exist, the server will respond to the request with the HTTP status code 404 not found.
       }
     })
     // .catch((error) => {
@@ -94,8 +94,8 @@ app.get("/api/persons/:id", (request, response, next) => {
     //   response.status(400).send({ error: "malformatted id" }); // The appropriate status code for the situation is 400 Bad Request (and NOT 500) because the situation fits the description perfectly:
     //   // I've just comment it because I will handle errors in a dedicated middleware later
     // });
-    .catch((error) => next(error));
-});
+    .catch((error) => next(error))
+})
 
 // ******** Deleting a person by id *******
 // app.delete("/api/persons/:id", (request, response) => {
@@ -106,13 +106,13 @@ app.get("/api/persons/:id", (request, response, next) => {
 // });
 
 // ********* Update with Express method *********
-app.delete("/api/persons/:id", (request, response, next) => {
+app.delete('/api/persons/:id', (request, response, next) => {
   Person.findByIdAndDelete(request.params.id)
     .then((result) => {
-      response.status(204).end();
+      response.status(204).end()
     })
-    .catch((error) => next(error));
-});
+    .catch((error) => next(error))
+})
 
 // ********* Creating a new person *********
 // I needed to Extract name and number from request.body ( Postman )
@@ -154,8 +154,8 @@ app.delete("/api/persons/:id", (request, response, next) => {
 // });
 
 //*********  I've destructured name and number but then tried to use body.content (which doesn't exist). */
-app.post("/api/persons", (request, response, next) => {
-  const body = request.body; // Define body first
+app.post('/api/persons', (request, response, next) => {
+  const body = request.body // Define body first
 
   // if (!body.name || !body.number) {
   //   return response.status(400).json({ error: "name or number missing" });
@@ -169,14 +169,14 @@ app.post("/api/persons", (request, response, next) => {
   const person = new Person({
     name: body.name,
     number: body.number,
-  });
+  })
 
   person
     .save()
     .then((savedPerson) => response.json(savedPerson))
     // .catch((error) => response.status(500).json({ error: error.message }));
-    .catch((error) => next(error));
-});
+    .catch((error) => next(error))
+})
 
 // Testing with Postman,
 // When it sends: POST http://localhost:3001/api/persons
@@ -196,53 +196,53 @@ app.post("/api/persons", (request, response, next) => {
 // });
 
 // ********* Using Mongoose methods *********
-app.get("/info", (request, response, next) => {
+app.get('/info', (request, response, next) => {
   Person.countDocuments({})
     .then((count) => {
-      const time = new Date();
+      const time = new Date()
       response.send(
         `<p>Phonebook has info for ${count} people</p>
          <p>${time}</p>`
-      );
+      )
     })
-    .catch((error) => next(error));
-});
+    .catch((error) => next(error))
+})
 
 // ********* Find a person with Mongoose method findByIdAndUpdate *********
-app.put("/api/persons/:id", (request, response, next) => {
-  const body = request.body;
+app.put('/api/persons/:id', (request, response, next) => {
+  const body = request.body
   // This is the updated person data sent by the client in the request body
   const person = {
     name: body.name,
     number: body.number,
-  };
+  }
   // { new: true }, que hará que nuestro controlador de eventos sea llamado con el nuevo documento modificado en lugar del original.
 
   // Mongoose validators are turned OFF by default when using findByIdAndUpdate (and other update methods)!
   Person.findByIdAndUpdate(request.params.id, person, { new: true, runValidators: true })
     .then((updatedPerson) => {
-      response.json(updatedPerson);
+      response.json(updatedPerson)
     })
-    .catch((error) => next(error));
-});
+    .catch((error) => next(error))
+})
 
 // ********* Middleware for handling errors *********
 const errorHandler = (error, request, response, next) => {
-  console.error(error.message);
+  console.error(error.message)
 
-  if (error.name === "CastError") {
-    return response.status(400).send({ error: "malformatted id" });
-  } else if (error.name === "ValidationError") {
-    return response.status(400).json({ error: error.message });
+  if (error.name === 'CastError') {
+    return response.status(400).send({ error: 'malformatted id' })
+  } else if (error.name === 'ValidationError') {
+    return response.status(400).json({ error: error.message })
   }
 
-  next(error);
-};
+  next(error)
+}
 
 // this has to be the last loaded middleware, also all the routes should be registered before this!
-app.use(errorHandler);
+app.use(errorHandler)
 
 // PORT definition and server start
 // const PORT = 3001;
-const port = process.env.PORT || 3001;
-app.listen(port, () => console.log(`Server running on port ${port}`));
+const port = process.env.PORT || 3001
+app.listen(port, () => console.log(`Server running on port ${port}`))
