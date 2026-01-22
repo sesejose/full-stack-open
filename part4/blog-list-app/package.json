@@ -4,11 +4,11 @@
   "version": "0.0.1",
   "type": "commonjs",
   "scripts": {
-    "dev": "node --watch index.js",
+    "dev": "vite",
     "build": "vite build",
     "lint": "eslint .",
     "preview": "vite preview",
-    "start": "node index.js",
+    "start": "node --watch index.js",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "dependencies": {
