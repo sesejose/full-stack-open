@@ -4,6 +4,8 @@
 // This helps keep configuration centralized and makes it easier to manage different environments (development, production, etc.).
 // It is important to load the environment variables at the very beginning to ensure they are available when needed.
 
+// The other parts of the application can access the environment variables by importing the configuration module:
+
 require("dotenv").config();
 
 const PORT = process.env.PORT;
