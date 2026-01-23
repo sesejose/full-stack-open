@@ -3,8 +3,6 @@ const app = require("./app"); // import the express application
 
 const config = require("./utils/config"); // import configuration settings
 
-const app = express(); // create an express application
-
 // const sampleBlogs = [
 //   {
 //     id: "65b0c1d2e3f4012345678901",
