@@ -32,6 +32,7 @@ app.use(express.json());
 
 app.use(middleware.requestLogger);
 
+// mount, use the blogs router for handling requests to /api/blogs
 app.use("/api/blogs", blogsRouter);
 
 app.use(middleware.unknownEndpoint);

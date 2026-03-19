@@ -1,4 +1,5 @@
 const logger = require("./logger");
+// middleware.js imports the logger module and defines three middleware functions: requestLogger, unknownEndpoint, and errorHandler. These functions are used to log incoming requests, handle unknown endpoints, and manage errors in the application, respectively. The middleware functions are exported for use in other parts of the application, such as app.js, where they are applied to the Express app to enhance its functionality and robustness.
 
 const requestLogger = (request, response, next) => {
   logger.info("Method:", request.method);
